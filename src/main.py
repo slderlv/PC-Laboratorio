@@ -56,9 +56,6 @@ def make_frequency_matrix(dictionary):
     frequency_matrix[x][y] = dictionary[xy]
   return frequency_matrix
     
-def calcular_pendiente(metricValue1, pixelValue1, metricValue2, pixelValue2):
-    m = (pixelValue1 - pixelValue2) / (metricValue2 - metricValue1)
-    return m
 
 def write_matrix(matrix):
   file = open("src/frequency_matrix.txt","w")
@@ -67,8 +64,6 @@ def write_matrix(matrix):
     file.write(str(count)+str(line)+"\n")
     count+=1
   file.close()
-  
-  
 
 def main():
   fileName = "UNI_CORR_500_01.txt"

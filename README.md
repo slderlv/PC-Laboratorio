@@ -48,4 +48,6 @@ En este laboratorio, nos enfocamos en la preparación de los datos para el anál
 
 ## 5. Conclusiones
 
-El análisis del flujo peatonal es una herramienta valiosa para la gestión y diseño de espacios públicos. Al organizar las coordenadas en matrices o diccionarios, hemos preparado los datos para futuros análisis y visualizaciones que nos permitirán comprender mejor el comportamiento de las personas en el pasillo del tren subterráneo. La implementación adecuada de las librerías y herramientas mencionadas ha facilitado el procesamiento de los datos proporcionados y su preparación para futuras etapas de estudio.
+El análisis del flujo peatonal es una herramienta valiosa para la gestión y diseño de espacios públicos. Al organizar las coordenadas en matrices o diccionarios, hemos preparado los datos para futuros análisis y visualizaciones que nos permitirán comprender mejor el comportamiento de las personas en el pasillo del metro. La implementación adecuada de las librerías y herramientas mencionadas ha facilitado el procesamiento de los datos proporcionados y su preparación para futuras etapas de estudio.
+
+La matriz de frecuencia generada por el programa se ha almacenado en el archivo "frequency_matrix.txt" en la carpeta "src", y está lista para su análisis posterior.
