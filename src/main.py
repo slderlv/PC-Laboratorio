@@ -6,8 +6,8 @@ def read_file(filename):
   return coordenates
 
 def apply_formula(X,Y):
-  newX = round(35.5*float(X)+350,0)
-  newY = round(-96*float(Y)+480,0)
+  newX = int(35.5*float(X)+350)
+  newY = int(-96*float(Y)+480)
   return newX,newY
 
 def divide_coordenates(coordenates):
@@ -49,6 +49,27 @@ def get_highest_frequency(dictionary):
 
   return highest_entries
 
+def make_frequency_matrix(dictionary):
+  frequency_matrix = np.zeros((640,480))
+  for xy in dictionary.keys():
+    x,y = xy
+    frequency_matrix[x][y] = dictionary[xy]
+  return frequency_matrix
+    
+def calcular_pendiente(metricValue1, pixelValue1, metricValue2, pixelValue2):
+    m = (pixelValue1 - pixelValue2) / (metricValue2 - metricValue1)
+    return m
+
+def write_matrix(matrix):
+  file = open("src/frequency_matrix.txt","w")
+  count = 0
+  for line in matrix:
+    file.write(str(count)+str(line)+"\n")
+    count+=1
+  file.close()
+  
+  
+
 def main():
   fileName = "UNI_CORR_500_01.txt"
   coordenates = read_file(fileName)
@@ -58,6 +79,9 @@ def main():
   XYDictionary = make_dictionary(XYList)
   highest_frequencies = get_highest_frequency(XYDictionary)
   print(*highest_frequencies.items(), sep="\n")
+  frequency_matrix = make_frequency_matrix(XYDictionary)
+  
+  write_matrix(frequency_matrix)
   
 main()
   
