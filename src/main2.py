@@ -65,20 +65,21 @@ def visualize_data_frames(data1, data2):
     axes[1].set_xlabel("X")
     axes[1].set_ylabel("Y")
     plt.colorbar(im2, ax=axes[1], label="Frecuencia")
-    
     plt.tight_layout()
+    plt.savefig("images/" + "double_hist2d_main2.png")
     plt.show()
 
 def visualize_frequency_matrix(data):
-  fig, ax = plt.subplots(figsize=(9, 6))
-  freq_matrix, x_edges, y_edges = np.histogram2d(data["X"], data["Y"], bins=80)
-  freq_matrix = freq_matrix.transpose()
-  im = ax.imshow(freq_matrix, origin="lower", cmap="plasma", extent=[x_edges[0], x_edges[-1], y_edges[0], y_edges[-1]], interpolation="nearest", aspect="auto")
-  plt.colorbar(im, label="Frecuencia")
-  plt.xlabel("X")
-  plt.ylabel("Y")
-  plt.title("Matriz de Frecuencias")
-  plt.show()  
+    fig, ax = plt.subplots(figsize=(9, 6))
+    freq_matrix, x_edges, y_edges = np.histogram2d(data["X"], data["Y"], bins=80)
+    freq_matrix = freq_matrix.transpose()
+    im = ax.imshow(freq_matrix, origin="lower", cmap="plasma", extent=[x_edges[0], x_edges[-1], y_edges[0], y_edges[-1]], interpolation="nearest", aspect="auto")
+    plt.colorbar(im, label="Frecuencia")
+    plt.xlabel("X")
+    plt.ylabel("Y")
+    plt.title("Matriz de Frecuencias")
+    plt.savefig("images/" + "hist2d_main2.png")
+    plt.show()  
 
 def conversion(x, y):
     px = 320 + 35.5 * float(x)
@@ -86,7 +87,7 @@ def conversion(x, y):
     return int(px), int(py)
 
 def get_distance(x1, y1, x2, y2):
-  return sqrt((x2-x1)**2 + (y2-y1)**2)
+    return sqrt((x2-x1)**2 + (y2-y1)**2)
 
 def get_velocity(row, data):
     if row["Frame"] == data.loc[data["PersID"] == row["PersID"], "Frame"].min():
@@ -103,13 +104,13 @@ def get_velocity(row, data):
     
 
 def main():  
-  data_frame1, data_frame2 = load_data()
-  data_frame1[["X", "Y"]] = data_frame1.apply(lambda row: conversion(row["X"], row["Y"]), axis=1).tolist()
-  data_frame2[["X", "Y"]] = data_frame2.apply(lambda row: conversion(row["X"], row["Y"]), axis=1).tolist()
-  data = pd.concat([data_frame1, data_frame2])
-  visualize_data_frames(data_frame1, data_frame2)
-  visualize_frequency_matrix(data)
-  # data.sort_values(by=["PersID", "Frame"])
-  # data["Velocity"] = data.apply(lambda row: get_velocity(row, data), axis=1)
-  
+    data_frame1, data_frame2 = load_data()
+    data_frame1[["X", "Y"]] = data_frame1.apply(lambda row: conversion(row["X"], row["Y"]), axis=1).tolist()
+    data_frame2[["X", "Y"]] = data_frame2.apply(lambda row: conversion(row["X"], row["Y"]), axis=1).tolist()
+    data = pd.concat([data_frame1, data_frame2])
+    visualize_data_frames(data_frame1, data_frame2)
+    visualize_frequency_matrix(data)
+    # data.sort_values(by=["PersID", "Frame"])
+    # data["Velocity"] = data.apply(lambda row: get_velocity(row, data), axis=1)
+    
 get_resource_info(main)

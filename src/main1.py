@@ -31,37 +31,37 @@ def get_resource_usage(code_to_measure):
 
 
 def read_file(filename):
-  file = open("src/"+filename,"r")
-  coordenates = [coord.strip("\n").split("\t")[2:] for coord in file.readlines()[4:]]
-  return coordenates
+    file = open("src/"+filename,"r")
+    coordenates = [coord.strip("\n").split("\t")[2:] for coord in file.readlines()[4:]]
+    return coordenates
 
 def conversion(X,Y):
-  newX = int(35.5*float(X)+320)
-  newY = int(-96*float(Y))
-  return newX,newY
+    newX = int(35.5*float(X)+320)
+    newY = int(-96*float(Y))
+    return newX,newY
 
 def divide_coordenates(coordenates):
-  XList = []
-  YList = []
-  ZList = []
-  XYList = []
-  for coor in coordenates:
-    X,Y = conversion(coor[0],coor[1])
-    XList.append(X)
-    YList.append(Y)
-    ZList.append(float(coor[2]))
-    XYList.append((X,Y))
-    
-  return XList,YList,ZList,XYList
+    XList = []
+    YList = []
+    ZList = []
+    XYList = []
+    for coor in coordenates:
+      X,Y = conversion(coor[0],coor[1])
+      XList.append(X)
+      YList.append(Y)
+      ZList.append(float(coor[2]))
+      XYList.append((X,Y))
+      
+    return XList,YList,ZList,XYList
 
 def identify_highest_frequency(XList,YList,ZList):
-  uniqueX, Xfrequency = np.unique(XList,return_counts=True)
-  uniqueY, Yfrequency = np.unique(YList,return_counts=True)
-  uniqueZ, Zfrequency = np.unique(ZList,return_counts=True)
+    uniqueX, Xfrequency = np.unique(XList,return_counts=True)
+    uniqueY, Yfrequency = np.unique(YList,return_counts=True)
+    uniqueZ, Zfrequency = np.unique(ZList,return_counts=True)
 
-  print("Las coordenadas X que más se repiten:",uniqueX[Xfrequency==max(Xfrequency)],"con un recuento de",max(Xfrequency))
-  print("Las coordenadas Y que más se repiten:",uniqueY[Yfrequency==max(Yfrequency)],"con un recuento de",max(Yfrequency))
-  print("Las coordenadas Z que más se repiten:",uniqueZ[Zfrequency==max(Zfrequency)],"con un recuento de",max(Zfrequency))
+    print("Las coordenadas X que más se repiten:",uniqueX[Xfrequency==max(Xfrequency)],"con un recuento de",max(Xfrequency))
+    print("Las coordenadas Y que más se repiten:",uniqueY[Yfrequency==max(Yfrequency)],"con un recuento de",max(Yfrequency))
+    print("Las coordenadas Z que más se repiten:",uniqueZ[Zfrequency==max(Zfrequency)],"con un recuento de",max(Zfrequency))
 
 def make_dictionary(array):
     dictionary = {}
@@ -73,27 +73,27 @@ def make_dictionary(array):
     return dictionary
     
 def get_highest_frequency(dictionary):
-  sortedDictionary = dict(sorted(dictionary.items(), key=lambda x: x[1], reverse=True))
+    sortedDictionary = dict(sorted(dictionary.items(), key=lambda x: x[1], reverse=True))
 
-  highest_entries = dict(list(sortedDictionary.items())[:10])
+    highest_entries = dict(list(sortedDictionary.items())[:10])
 
-  return highest_entries
+    return highest_entries
 
 def make_frequency_matrix(dictionary):
-  frequency_matrix = np.zeros((640,480))
-  for xy in dictionary.keys():
-    x,y = xy
-    frequency_matrix[x][y] = dictionary[xy]
-  return frequency_matrix
+    frequency_matrix = np.zeros((640,480))
+    for xy in dictionary.keys():
+      x,y = xy
+      frequency_matrix[x][y] = dictionary[xy]
+    return frequency_matrix
     
 
 def write_matrix(matrix):
-  file = open("src/frequency_matrix.txt","w")
-  count = 0
-  for line in matrix:
-    file.write(str(count)+str(line)+"\n")
-    count+=1
-  file.close()
+    file = open("src/frequency_matrix.txt","w")
+    count = 0
+    for line in matrix:
+      file.write(str(count)+str(line)+"\n")
+      count+=1
+    file.close()
 
 def visualize_data_frames(frequency_matrix1, frequency_matrix2):
     fig, axes = plt.subplots(1, 2, figsize=(15, 6))
@@ -111,8 +111,8 @@ def visualize_data_frames(frequency_matrix1, frequency_matrix2):
     axes[1].set_xlabel("X")
     axes[1].set_ylabel("Y")
     plt.colorbar(im2, ax=axes[1], label="Frecuencia")
-    
     plt.tight_layout()
+    plt.savefig("images/" + "double_hist2d_main1.png")
     plt.show()
 
 def visualize_frequency_matrix(frequency_matrix):
@@ -124,35 +124,35 @@ def visualize_frequency_matrix(frequency_matrix):
     plt.xlabel("X")
     plt.ylabel("Y")
     plt.title("Matriz de Frecuencias")
+    plt.savefig("images/" + "hist2d_main1.png")
     plt.show()
 
 def main():
-  file_name1 = "UNI_CORR_500_01.txt"
-  file_name2 = "UNI_CORR_500_02.txt"
-  data_frame1 = read_file(file_name1)
-  data_frame2 = read_file(file_name2)
-  XPixels1, YPixels1, ZList1, XYList1 = divide_coordenates(data_frame1)
-  XPixels2, YPixels2, ZList2, XYList2 = divide_coordenates(data_frame2)
-  # identify_highest_frequency(XPixels,YPixels,ZList)
-  
-  XYDictionary1 = make_dictionary(XYList1)
-  XYDictionary2 = make_dictionary(XYList2)
-  
-  # highest_frequencies1 = get_highest_frequency(XYDictionary1)
-  # highest_frequencies2 = get_highest_frequency(XYDictionary2)
-  # print(*highest_frequencies1.items(), sep="\n")
-  # print(*highest_frequencies2.items(), sep="\n")
-  
-  frequency_matrix1 = make_frequency_matrix(XYDictionary1)
-  frequency_matrix2 = make_frequency_matrix(XYDictionary2)
-  frequency_matrix1 = np.rot90(frequency_matrix1)
-  frequency_matrix2 = np.rot90(frequency_matrix2)
-  combined_matrix = np.maximum(frequency_matrix1, frequency_matrix2)
-  
+    file_name1 = "UNI_CORR_500_01.txt"
+    file_name2 = "UNI_CORR_500_02.txt"
+    data_frame1 = read_file(file_name1)
+    data_frame2 = read_file(file_name2)
+    XPixels1, YPixels1, ZList1, XYList1 = divide_coordenates(data_frame1)
+    XPixels2, YPixels2, ZList2, XYList2 = divide_coordenates(data_frame2)
+    # identify_highest_frequency(XPixels,YPixels,ZList)
     
-  # write_matrix(frequency_matrix)
-  visualize_data_frames(frequency_matrix1, frequency_matrix2)
-  visualize_frequency_matrix(combined_matrix)
+    XYDictionary1 = make_dictionary(XYList1)
+    XYDictionary2 = make_dictionary(XYList2)
+    
+    # highest_frequencies1 = get_highest_frequency(XYDictionary1)
+    # highest_frequencies2 = get_highest_frequency(XYDictionary2)
+    # print(*highest_frequencies1.items(), sep="\n")
+    # print(*highest_frequencies2.items(), sep="\n")
+    
+    frequency_matrix1 = make_frequency_matrix(XYDictionary1)
+    frequency_matrix2 = make_frequency_matrix(XYDictionary2)
+    frequency_matrix1 = np.rot90(frequency_matrix1)
+    frequency_matrix2 = np.rot90(frequency_matrix2)
+    combined_matrix = np.maximum(frequency_matrix1, frequency_matrix2)
+      
+    # write_matrix(frequency_matrix)
+    visualize_data_frames(frequency_matrix1, frequency_matrix2)
+    visualize_frequency_matrix(combined_matrix)
   
 get_resource_info(main)
   
