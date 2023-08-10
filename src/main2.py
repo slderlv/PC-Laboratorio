@@ -101,15 +101,51 @@ def get_velocity(row, data):
     else:
         velocity = 0
     return velocity
+
+
+def generate_frame_points(data):
+    unique_frames = data['Frame'].unique()
+    frame_points = []
+
+    for frame_number in unique_frames:
+        frame_data = data[data['Frame'] == frame_number]
+        frame_points.append((frame_number, frame_data[['X', 'Y']].values))
+
+    return frame_points
+
+def show_by_frame(data):
+    fig, ax = plt.subplots()
+    ax.set_xlim(100, 500)
+    ax.set_ylim(0, 500)
     
+    x_ticks = np.arange(100, 501, 50)
+    y_ticks = np.arange(0, 501, 50)
+    
+    ax.set_xticks(x_ticks)
+    ax.set_yticks(y_ticks)
+    
+    frame_points = generate_frame_points(data)
+    
+    for frame_number, points in frame_points:
+        ax.clear()
+        ax.set_title(f"Frame: {frame_number}")
+        
+        ax.scatter(points[:, 0], points[:, 1], c='blue', label='Coordenada')
+        
+        ax.set_xticks(x_ticks)
+        ax.set_yticks(y_ticks)
+        
+        plt.pause(1/25)
+
 
 def main():  
     data_frame1, data_frame2 = load_data()
     data_frame1[["X", "Y"]] = data_frame1.apply(lambda row: conversion(row["X"], row["Y"]), axis=1).tolist()
     data_frame2[["X", "Y"]] = data_frame2.apply(lambda row: conversion(row["X"], row["Y"]), axis=1).tolist()
     data = pd.concat([data_frame1, data_frame2])
-    visualize_data_frames(data_frame1, data_frame2)
-    visualize_frequency_matrix(data)
+    show_by_frame(data)
+    # visualize_data_frames(data_frame1, data_frame2)
+    # visualize_frequency_matrix(data)
     # data.sort_values(by=["PersID", "Frame"])
     # data["Velocity"] = data.apply(lambda row: get_velocity(row, data), axis=1)
     
