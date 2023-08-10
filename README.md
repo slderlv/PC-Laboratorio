@@ -63,6 +63,8 @@ La visualización final muestra la frecuencia peatonal en un mapa de calor, lo q
 
 ## 5. Conclusiones
 
-El análisis del flujo peatonal es esencial para la planificación urbana y la mejora de la experiencia de los usuarios en espacios públicos. Al implementar diferentes enfoques utilizando NumPy y Pandas, se ha demostrado la importancia de elegir las herramientas adecuadas para el procesamiento y análisis de datos. La visualización de la frecuencia peatonal en un mapa de calor brinda información valiosa para la toma de decisiones informadas en la gestión de espacios públicos.
+Al analizar los resultados obtenidos de la ejecución de ambos `main` que realizan el cálculo de frecuencia peatonal, se puede observar una ligera diferencia en el tiempo de ejecución entre el `main1` y el `main2`, donde este último utiliza la librería pandas.
 
-La matriz de frecuencia generada por el programa se ha almacenado en el archivo "frequency_matrix.txt" en la carpeta "src", y está lista para su análisis posterior.
+La razón detrás de esta diferencia en el tiempo de ejecución radica en la forma en que pandas maneja y manipula los datos. Aunque pandas proporciona una abstracción conveniente para el manejo de datos tabulares, su uso puede introducir cierta sobrecarga debido a las operaciones internas de indexación y la manipulación de objetos DataFrame. En el `main2`, al emplear pandas para realizar la organización y manipulación de los datos, se observa un aumento en el tiempo de ejecución en comparación con el `main1`, que utiliza estructuras de datos más simples y directas.
+
+Es importante tener en cuenta que, si bien pandas ofrece una mayor flexibilidad y funcionalidad para realizar análisis de datos complejos, su uso puede no ser óptimo para tareas más simples y directas, como en el caso de este laboratorio. En situaciones donde la eficiencia y velocidad de ejecución son un factor crucial, es recomendable evaluar cuidadosamente si el uso de pandas es realmente necesario, o si alternativas más simples y eficientes pueden cumplir con los objetivos del análisis de manera más rápida.
