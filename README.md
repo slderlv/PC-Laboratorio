@@ -1,6 +1,6 @@
 ![Logo UCN](images/60x60-ucn-negro.png)
 
-# Laboratorio 02: Análisis de Flujo Peatonal y Cálculo de Frecuencia
+# Laboratorio 02: Análisis de Flujo Peatonal y Cálculo de Velocidad
 
 ## 1. Introducción
 
