@@ -66,18 +66,18 @@ def show_histogram(df):
     plt.ylabel("Velocity")
     plt.show()
     
-def compare_histograms(df1, df2):
+def compare_histograms(df1, df2,fileName1,fileName2):
     fig, axes = plt.subplots(1, 2, figsize=(12, 6))
     axes[0].hist2d(x=df1["Frame"], y=df1["Velocity"], bins=len(df1["Frame"].unique())//10)
     axes[0].set_xlabel("Frame")
     axes[0].set_ylabel("Velocity")
-    axes[0].set_title("DataFrame 1")
+    axes[0].set_title(fileName1)
     
     axes[1].hist2d(x=df2["Frame"], y=df2["Velocity"], bins=len(df2["Frame"].unique())//10)
     axes[1].set_xlabel("Frame")
     axes[1].set_ylabel("Velocity")
-    axes[1].set_title("DataFrame 2")
-    
+    axes[1].set_title(fileName2)
+    plt.savefig("images/"+"histogram_velocity_comparisson.png")
     plt.show()
 
 def process_data(fileName):
@@ -86,7 +86,7 @@ def process_data(fileName):
     dataFrame.to_csv("src/results/"+fileName.rstrip(".txt")+"_modified.txt",index=False,sep="\t")
     return dataFrame
 
-def show_box_plot(df):
+def show_box_plot(df,fileName):
     random_ids = random.sample(list(df["PersID"]), 10)
     id_filter = df["PersID"].isin(random_ids)
     df = df.loc[id_filter]
@@ -95,7 +95,8 @@ def show_box_plot(df):
     plt.xticks(range(1, len(grouped_data) + 1), grouped_data.index)
     plt.xlabel("PersID")
     plt.ylabel("Velocity")
-    plt.title("Box Plot of Velocity by PersID")
+    plt.title("Velocity by PersID ({})".format(fileName))
+    plt.savefig("images/"+"velocity_boxplot.png")
     plt.show()
 
 def main():
@@ -123,8 +124,8 @@ def main():
     # or else run this line
     # dataFrame2 = process_data(files[7])
     
-    compare_histograms(dataFrame1, dataFrame2)
-    show_box_plot(dataFrame2)
+    compare_histograms(dataFrame1, dataFrame2,fileName1,fileName2)
+    show_box_plot(dataFrame2,fileName2)
     
 
 get_resource_info(main)
