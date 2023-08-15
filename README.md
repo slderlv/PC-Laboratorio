@@ -61,5 +61,14 @@ La visualización final muestra la velocidad peatonal, lo que proporciona una vi
 
 ## 5. Conclusiones
 
-`velocity_module` es una potente herramienta desarrollada en este laboratorio para visualizar el comportamiento de las velocidades de los peatones en multitudes. Esta incorporación agiliza el análisis y ofrece una solución completa para el cálculo y la representación visual de las velocidades peatonales en función de los datos proporcionados en los archivos de texto. Las funciones adicionales `compare_histograms` y `show_box_plot` amplían las opciones de análisis y visualización para una comprensión más profunda del flujo peatonal.
+`velocity_module` es una potente herramienta desarrollada en este laboratorio para visualizar el comportamiento de las velocidades de los peatones en multitudes. Esta incorporación agiliza el análisis y ofrece una solución completa para el cálculo y la representación visual de las velocidades peatonales en función de los datos proporcionados en los archivos de texto.
+
+Al analizar los resultados obtenidos, se observa que el primer archivo de texto, UNI_CORR_500_01, presenta una velocidad constante alrededor de los 1.5 metros por segundo a lo largo de aproximadamente 2000 frames. Esto podría indicar que las personas en este archivo mantuvieron una velocidad constante mientras se movían por el pasillo del tren subterráneo.
+
+Por otro lado, en el caso del quinto archivo de texto, UNI_CORR_500_05, se evidencia un patrón diferente. Aquí, la velocidad parece comenzar con 1.5 metros por segundo y luego disminuye hasta el frame 1000. A partir de ese punto, se estabiliza alrededor de 0.7 metros por segundo hasta el final del registro (frame 4000 aproximadamente). Esta variación en las velocidades podría sugerir cambios en la densidad de personas o en las condiciones del entorno a lo largo del tiempo.
+
+En cuanto a los diagramas de caja generados, se observa que en el archivo UNI_CORR_500_05, la mediana de velocidad para cada persona se encuentra generalmente en el rango de 1m/s a 0.5m/s. Esto sugiere que la mayoría de las personas mantuvieron velocidades en ese intervalo a lo largo del tiempo observado.
+
+En resumen, este laboratorio y el módulo `velocity_module` brindan herramientas esenciales para el análisis del flujo peatonal y la comprensión de los patrones de velocidad en espacios públicos. La posibilidad de calcular y visualizar velocidades, junto con la capacidad de analizar múltiples archivos y realizar comparaciones, proporciona información valiosa para la planificación y el diseño de espacios urbanos eficientes y seguros.
+
 
