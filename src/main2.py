@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import time
-import psutil
+import time, psutil
 from math import sqrt
+import streamlit as st
 
 def get_resource_info(code_to_measure):
     resources_save_data = get_resource_usage(code_to_measure=code_to_measure)
@@ -32,52 +32,17 @@ def get_resource_usage(code_to_measure):
     }
     
 def read_file(filename):
-  file = pd.read_csv("src/"+filename,skiprows=3,sep="\t")
-  file = file.rename(columns={
-    "# PersID": "PersID",
-  })
+  file = pd.read_csv("src/results/"+filename,sep="\t")
   return file
 
 def load_data():
-  file_name1 = "UNI_CORR_500_01.txt"
-  file_name2 = "UNI_CORR_500_02.txt"
+  file_name1 = "UNI_CORR_500_01_modified.txt"
+  file_name2 = "UNI_CORR_500_02_modified.txt"
   file1 = read_file(file_name1)
   file2 = read_file(file_name2)
   return file1,file2
 
-def generate_frame_points(data):
-    unique_frames = data['Frame'].unique()
-    frame_points = []
 
-    for frame_number in unique_frames:
-        frame_data = data[data['Frame'] == frame_number]
-        frame_points.append((frame_number, frame_data[['X', 'Y']].values))
-
-    return frame_points
-
-def show_by_frame(data):
-    fig, ax = plt.subplots()
-    ax.set_xlim(100, 500)
-    ax.set_ylim(0, 500)
-    
-    x_ticks = np.arange(100, 501, 50)
-    y_ticks = np.arange(0, 501, 50)
-    
-    ax.set_xticks(x_ticks)
-    ax.set_yticks(y_ticks)
-    
-    frame_points = generate_frame_points(data)
-    
-    for frame_number, points in frame_points:
-        ax.clear()
-        ax.set_title(f"Frame: {frame_number}")
-        
-        ax.scatter(points[:, 0], points[:, 1], c='blue', label='Coordenada')
-        
-        ax.set_xticks(x_ticks)
-        ax.set_yticks(y_ticks)
-        
-        plt.pause(1/25)
 
 def visualize_data_frames(data1, data2):
     fig, axes = plt.subplots(1, 2, figsize=(15, 6))
@@ -102,7 +67,7 @@ def visualize_data_frames(data1, data2):
     plt.tight_layout()
     plt.savefig("images/" + "double_hist2d_main2.png")
     plt.show()
-
+    
 def visualize_frequency_matrix(data):
     fig, ax = plt.subplots(figsize=(9, 6))
     freq_matrix, x_edges, y_edges = np.histogram2d(data["X"], data["Y"], bins=80)
@@ -113,21 +78,55 @@ def visualize_frequency_matrix(data):
     plt.ylabel("Y")
     plt.title("Matriz de Frecuencias")
     plt.savefig("images/" + "hist2d_main2.png")
-    plt.show()  
+    plt.show()
 
 def conversion(x, y):
     px = 320 + 35.5 * float(x)
     py = 96 * float(y)
     return int(px), int(py)
 
+def generate_frame_points(data):
+    unique_frames = data['Frame'].unique()
+    frame_points = []
+
+    for frame_number in unique_frames:
+        frame_data = data[data['Frame'] == frame_number]
+        frame_points.append((frame_number, frame_data[['X', 'Y']].values))
+
+    return frame_points
+
+def show_by_frame(data):
+    fig, ax = plt.subplots()
+    ax.set_xlim(100, 500)
+    ax.set_ylim(0, 500)
+    
+    x_ticks = np.arange(100, 501, 50)
+    y_ticks = np.arange(0, 501, 50)
+    
+    ax.set_xticks(x_ticks)
+    ax.set_yticks(y_ticks)
+    
+    frame_points = generate_frame_points(data)
+
+    for frame_number, points in frame_points:
+        ax.clear()
+        ax.set_title(f"Frame: {frame_number}")
+        
+        ax.scatter(points[:, 0], points[:, 1], c='blue', label='Coordenada')
+        
+        ax.set_xticks(x_ticks)
+        ax.set_yticks(y_ticks)
+        
+        plt.pause(1/25)
+
 def main():  
     data_frame1, data_frame2 = load_data()
     data_frame1[["X", "Y"]] = data_frame1.apply(lambda row: conversion(row["X"], row["Y"]), axis=1).tolist()
     data_frame2[["X", "Y"]] = data_frame2.apply(lambda row: conversion(row["X"], row["Y"]), axis=1).tolist()
-    data = pd.concat([data_frame1, data_frame2])
+    show_by_frame(data_frame1)
     # visualize_data_frames(data_frame1, data_frame2)
     # visualize_frequency_matrix(data)
     # data.sort_values(by=["PersID", "Frame"])
-    # data["Velocity"] = data.apply(lambda row: get_velocity(row, data), axis=1)
+    # data["Velocity"]
     
 get_resource_info(main)
