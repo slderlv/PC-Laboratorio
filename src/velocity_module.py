@@ -3,6 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import psutil,time,random
+from scipy.spatial import KDTree
+#6194813
+#146.83.128.60
 random.seed(1)
 
 def get_resource_info(code_to_measure):
@@ -59,12 +62,6 @@ def read_modified_file(filename):
     modified_filename = filename.rstrip(".txt")+"_modified.txt"
     dataFrame = pd.read_csv("src/results/"+modified_filename,sep="\t")
     return dataFrame
-
-def show_histogram(df):
-    plt.hist2d(x=df["Frame"],y=df["Velocity"],bins=200)
-    plt.xlabel("Frame")
-    plt.ylabel("Velocity")
-    plt.show()
     
 def compare_histograms(df1, df2,fileName1,fileName2):
     fig, axes = plt.subplots(1, 2, figsize=(12, 6))
@@ -85,20 +82,35 @@ def process_data(fileName):
     dataFrame["Velocity"] = dataFrame.apply(get_velocity, df=dataFrame, axis=1)
     dataFrame.to_csv("src/results/"+fileName.rstrip(".txt")+"_modified.txt",index=False,sep="\t")
     return dataFrame
+    
+def calculate_sk(fileName, dataframe, k):
+    dataframe["Sk_Value"] = 0
 
-def show_box_plot(df,fileName):
-    random_ids = random.sample(list(df["PersID"]), 10)
-    id_filter = df["PersID"].isin(random_ids)
-    df = df.loc[id_filter]
-    grouped_data = df.groupby("PersID")["Velocity"].apply(list)
-    plt.boxplot(grouped_data)
-    plt.xticks(range(1, len(grouped_data) + 1), grouped_data.index)
-    plt.xlabel("PersID")
-    plt.ylabel("Velocity")
-    plt.title("Velocity by PersID ({})".format(fileName))
-    plt.savefig("images/"+"velocity_boxplot.png")
-    plt.show()
+    for i in dataframe["Frame"].unique():
+        df = dataframe[dataframe["Frame"] == i].copy()
+        coordenates = df[["X", "Y"]].values
+        df["indexes"] = np.arange(len(df))
 
+        for id in df["indexes"]:
+            query_point = coordenates[id]
+
+            tree = KDTree(coordenates)
+            neighborsIndex = tree.query_ball_point(query_point, k)
+            neighborsIndex = [index for index in neighborsIndex if index != id]
+            neighborsFrame = coordenates[neighborsIndex]
+
+            mean_sk = 0
+            if len(neighborsIndex) > 0:
+                distances = np.linalg.norm(neighborsFrame - query_point, axis=1)
+                mean_sk = np.sum(distances) / len(neighborsIndex)
+
+            filtered_index = df.index[df["indexes"] == id].values
+            dataframe.at[int(filtered_index), "Sk_Value"] = mean_sk
+
+    dataframe.to_csv("src/results/" + fileName.rstrip(".txt") + "_modified.txt", index=False, sep="\t")
+    return dataframe
+
+    
 def main():
     files = {
         # Right to Left
@@ -117,15 +129,10 @@ def main():
     fileName1 = files[1]
     fileName2 = files[5]
     
-    # if data has already been processed run this line
     dataFrame1 = read_modified_file(fileName1)
     dataFrame2 = read_modified_file(fileName2)
-    
-    # or else run this line
-    # dataFrame2 = process_data(files[7])
-    
-    compare_histograms(dataFrame1, dataFrame2,fileName1,fileName2)
-    show_box_plot(dataFrame2,fileName2)
-    
+
+    dataFrame1 = calculate_sk(fileName1,dataFrame1,k=5)
+        
 
 get_resource_info(main)
