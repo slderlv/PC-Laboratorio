@@ -144,6 +144,14 @@ def show_sk_vel_graph(df, id_person):
     plt.show()
 
 
+def get_most_repited(df):
+    ids = df['PersID']
+
+    idss, frecuency = np.unique(ids, return_counts=True)
+    indice_valor_max = np.argmax(frecuency)
+    return idss[indice_valor_max]
+
+
 def main():
     files = {
         # Right to Left
@@ -168,10 +176,11 @@ def main():
     fileName7 = files[7]
     fileName8 = files[8]
     fileName9 = files[9]
+    df = read_modified_file(fileName5)
 
-    id_person = 446
+    id_person = get_most_repited(df)
 
-    show_sk_vel_graph(read_modified_file(fileName5), id_person)
+    show_sk_vel_graph(df, id_person)
 
 
 main()
