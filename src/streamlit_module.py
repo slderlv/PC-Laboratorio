@@ -3,16 +3,18 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import random
 import numpy as np
+from scipy.optimize import curve_fit 
 
-fileName = "UNI_CORR_500_01_modified"
+fileName1 = "UNI_CORR_500_01_modified.txt"
+fileName2 = "UNI_CORR_500_02_modified.txt"
 df1 = pd.read_csv("C:/Users/vicen/OneDrive/Escritorio/Progra científica/Laboratorios/Lab01/src/results/UNI_CORR_500_01_modified.txt", sep="\t")
 df2 = pd.read_csv("C:/Users/vicen/OneDrive/Escritorio/Progra científica/Laboratorios/Lab01/src/results/UNI_CORR_500_02_modified.txt", sep="\t")
-st.write("""
-# DataFrame 1         
+st.write(f"""
+# {fileName1}       
          """)
 st.table(df1.head(5))
-st.write("""
-# DataFrame 2         
+st.write(f"""
+# {fileName2}         
          """)
 st.table(df2.head(5))
 
@@ -25,14 +27,14 @@ def show_box_plot(df,fileName):
     plt.xticks(range(1, len(grouped_data) + 1), grouped_data.index)
     plt.xlabel("PersID")
     plt.ylabel("Velocity")
-    plt.title("Velocity by PersID ({})".format(fileName))
+    plt.title("Velocity by Frame ({})".format(fileName))
     #plt.savefig("C:/Users/vicen/OneDrive/Escritorio/Progra científica/Laboratorios/Lab01/images/velocity_boxplot.png")
     st.pyplot(plt)
 
 def show_histogram(df):
     with st.sidebar:
         st.write("Opciones")
-        div = st.slider("Número de bins:",20,250,20)
+        div = st.slider("Número de bins (histograma):",20,250,20)
     plt.hist2d(x=df["Frame"],y=df["Velocity"],bins=div)
     plt.xlabel("Frame")
     plt.ylabel("Velocity")
@@ -60,7 +62,7 @@ def show_by_frame(data):
     ax.set_yticks(y_ticks)
     
     frame_points = generate_frame_points(data)
-    st.pyplot(ax)
+
     for frame_number, points in frame_points:
         ax.clear()
         ax.set_title(f"Frame: {frame_number}")
@@ -69,6 +71,8 @@ def show_by_frame(data):
         
         ax.set_xticks(x_ticks)
         ax.set_yticks(y_ticks)
+        
+        st.pyplot(fig)
         
         plt.pause(1/25)
 
@@ -105,7 +109,6 @@ def visualize_histogram(data):
         div = st.slider("Número de bins:", 20, 200, 10)
     fig, ax = plt.subplots(figsize=(8, 6))
     
-    # Histograma para el DataFrame
     freq_matrix, x_edges, y_edges = np.histogram2d(data["X"], data["Y"], bins=div)
     freq_matrix = freq_matrix.transpose()
     im = ax.imshow(freq_matrix, origin="lower", cmap="plasma", extent=[x_edges[0], x_edges[-1], y_edges[0], y_edges[-1]], interpolation="nearest", aspect="auto")
@@ -117,12 +120,38 @@ def visualize_histogram(data):
     st.pyplot(plt)
 
 def correlation(df1):
-    plt.scatter(df1["Velocity"],df1["Sk_Value"])
-    plt.grid(True)
-    plt.show()
+    fig, ax = plt.subplots()
+    ax.scatter(df1["Velocity"], df1["Sk_Value"])
+    ax.set_xlabel("Velocity")
+    ax.set_ylabel("Sk_Value")
+    ax.set_title("Correlación entre Velocity y Sk_Value")
+    st.pyplot(fig)
 
-#show_box_plot(df,fileName)
-#show_by_frame(data)
-#show_histogram(df1)
+def curve_func(x, a, b, c):
+    return a * np.exp(-b * x) + c
+
+def optimize_sk(df,fileName):
+    x_data = df["Sk_Value"].values
+    y_data = df["Velocity"].values
+
+    params, covariance = curve_fit(curve_func, x_data, y_data)
+
+    a_fit, b_fit, c_fit = params
+
+    print(f"Parámetros ajustados: a={a_fit}, b={b_fit}, c={c_fit}")
+
+    df["Velocity_Fitted"] = curve_func(x_data, a_fit, b_fit, c_fit)
+
+    plt.scatter(x_data, y_data, label="Datos reales")
+    plt.plot(x_data, df["Velocity_Fitted"], label="Valores ajustados", color="red")
+    plt.xlabel("Sk_Value")
+    plt.ylabel("Velocity")
+    plt.legend()
+    plt.title(f"Ajuste de curva para {fileName}")
+    st.pyplot(plt)
+
+show_box_plot(df1,fileName1)
+show_histogram(df1)
 correlation(df1)
-#visualize_histogram(df2)
+optimize_sk(df1,fileName1)
+#show_by_frame(df1)

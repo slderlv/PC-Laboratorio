@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import psutil,time,random
 from scipy.spatial import KDTree
+from scipy.optimize import curve_fit
+
 #6194813
 #146.83.128.60
 random.seed(1)
@@ -109,7 +111,6 @@ def calculate_sk(fileName, dataframe, k):
 
     dataframe.to_csv("src/results/" + fileName.rstrip(".txt") + "_modified.txt", index=False, sep="\t")
     return dataframe
-
     
 def main():
     files = {
@@ -132,7 +133,6 @@ def main():
     dataFrame1 = read_modified_file(fileName1)
     dataFrame2 = read_modified_file(fileName2)
 
-    dataFrame1 = calculate_sk(fileName1,dataFrame1,k=5)
-        
+    dataFrame1 = calculate_sk(fileName1,dataFrame1,k=5)        
 
 get_resource_info(main)
