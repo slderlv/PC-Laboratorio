@@ -78,7 +78,7 @@ def get_velocity(row, df):
 
 
 def read_file(filename):
-    dataFrame = pd.read_csv("./data/"+filename, skiprows=3, sep="\t")
+    dataFrame = pd.read_csv("../data/"+filename, skiprows=3, sep="\t")
     dataFrame = dataFrame.rename(columns={
         "# PersID": "PersID"
     })
@@ -87,7 +87,7 @@ def read_file(filename):
 
 def read_modified_file(filename):
     modified_filename = filename.rstrip(".txt")+"_modified.txt"
-    dataFrame = pd.read_csv("./results/"+modified_filename, sep="\t")
+    dataFrame = pd.read_csv("../results/"+modified_filename, sep="\t")
     return dataFrame
 
 
