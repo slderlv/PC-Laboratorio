@@ -5,6 +5,8 @@ import pandas as pd
 import psutil
 import time
 import random
+import streamlit as st
+from PIL import Image
 from scipy.spatial import KDTree
 from scipy.optimize import curve_fit
 
@@ -141,7 +143,7 @@ def show_sk_vel_graph(df, id_person):
     ax.set_ylabel("Sk_Value")
     ax.set_title("Correlación entre Velocity y Sk_Value")
     plt.savefig("../images/"+"sk_vel_graph.png")
-    plt.show()
+    return fig
 
 
 def get_most_repited(df):
@@ -151,6 +153,9 @@ def get_most_repited(df):
     indice_valor_max = np.argmax(frecuency)
     return idss[indice_valor_max]
 
+def show_sk(id_person):
+    df = read_modified_file("UNI_CORR_500_05.txt")
+    return show_sk_vel_graph(df, id_person)
 
 def main():
     files = {
@@ -179,8 +184,66 @@ def main():
     df = read_modified_file(fileName5)
 
     id_person = get_most_repited(df)
-
-    show_sk_vel_graph(df, id_person)
-
+    grafica_sk = show_sk_vel_graph(df, id_person)
+    grafica_sk.show()
+    time.sleep(7)
 
 main()
+
+
+with st.container():
+    st.title('Análisis de Flujo Peatonal con Pandas y Matplotlib')
+    st.subheader('Esta aplicación es para observar el comportamiento de peatones en el pasillo de un metro')
+    left_column, right_column = st.columns(2)
+    with left_column:
+        st.markdown(f'<h4 style="text-align: left; font-size: 24px;"><a href="https://github.com/slderlv/PC-Laboratorio" target="_blank" style="text-decoration: none; color: inherit;"><u>Visita el repositorio en GitHub</u></a></h4>', unsafe_allow_html=True)
+    with right_column:
+        st.image('../images/github-mark-white.png', width=35)
+
+st.write("---")
+
+with st.container():
+    st.write("")
+    st.subheader("Comparación de velocidades")
+    st.write("")
+    st.write('''Se utilizaron dos archivos de texto que contienen datos relevantes sobre las personas detectadas en el pasillo del metro,
+    incluyendo su ID, el frame del video en el que aparecen y sus coordenadas (x, y, z) en un espacio tridimensional. Los datos procesados
+    permitieron la obtención de datos como la velocidad peatonal y el promedio de las distancias entre peatones dado un radio''')
+    st.write("")
+    st.image('../images/histogram_velocity_comparisson.png', caption='Fig 1. Histograma a partir de datos de archivo UNI_CORR_500_01 y UNI_CORR_500_05')
+    st.write("")
+    st.write('''A partir de los histogramas se puede observar patrones de velocidad distintos para los diferentes archivos seleccionados.
+    Para los datos del primer archivo se obtuvo que se mantiene una velocidad constante de alrededor de 1.5 metros por segundo a lo largo de
+    aproximadamente 2000 frames, mientras que en el segundo histograma de Velocidad vs Frame se aprecia una variación en la velocidad,
+    comenzando en 1.5 metros por segundo y luego disminuyendo hasta aproximadamente el frame 1000, para luego estabilizarse a alrededor
+    de 0.7 metros por segundo hasta el final del registro.''')
+    st.write('''
+            Los resultados obtenidos con el primer archivo podrían indicar que las personas de esa muestra mantuvieron una velocidad constante 
+            mientras se movían por el pasillo del tren subterráneo. En tanto las variaciones de velocidad de la segunda muestra sugieren 
+            posibles cambios en la densidad de personas o en las condiciones del entorno a lo largo del tiempo.''')
+    st.write("")
+
+with st.container():
+    st.write("")
+    st.write('''Para la comparación de velocidades entre diferentes peatones se creó un boxplot utilizando los datos del archivo UNI_CORR_500_01
+    ''')
+    st.write("")
+    st.image('../images/velocity_boxplot.png', caption='Fig 2. Diagrama de caja y bigote a partir de datos de archivo UNI_CORR_500_01')
+    st.write("")
+    st.write('''En cuanto a los diagramas de caja generados, se observa que en el archivo UNI_CORR_500_01, la mediana de velocidad para
+    cada persona se encuentra generalmente en el rango de 1,5 +- 0,3 m/s Esto sugiere que la mayoría de las personas mantuvieron velocidades
+    en ese intervalo a lo largo del tiempo observado.''')
+    st.write("")
+
+with st.container():
+    st.write("")
+    st.subheader("Constante de ecuación de Weidmann vs Velocidad")
+    st.write('''En el estudio de peatones se calculó la constante de la ecuación de Weidmann (Sk) para obtener la velocidad de cada peatón
+    en el archivo UNI_CORR_500_05 en función de los transeúntes dentro de un radio''')
+    st.write("")
+    div = st.slider('ID peatón:', 1, 905, 710)
+    st.pyplot(show_sk(div))
+    st.write("")
+    st.write('''Con el Scatter se puede concluir que a mayor cantidad de transeúntes cercanos al analizado, menor es la velocidad predicha, y
+    a menor cantidad de vecinos transeúntes en el radio, mayor es la velocidad predicha, proporcionando así, el Sk, información adicional sobre cómo se
+    distribuyen las velocidades y las distancias entre los peatones en el espacio público''')
