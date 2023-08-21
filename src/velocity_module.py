@@ -87,7 +87,7 @@ def read_file(filename):
 
 def read_modified_file(filename):
     modified_filename = filename.rstrip(".txt")+"_modified.txt"
-    dataFrame = pd.read_csv("../results/"+modified_filename, sep="\t")
+    dataFrame = pd.read_csv("./results/"+modified_filename, sep="\t")
     return dataFrame
 
 
@@ -134,7 +134,7 @@ def calculate_sk(fileName, dataframe, k):
     return updated_dataframe
 
 
-def show_sk_vel_graph(df, id_person):
+def show_sk_vel_graph(df, id_person, flag):
 
     df = df[df["PersID"] == id_person]
     fig, ax = plt.subplots(figsize=(8, 6))
@@ -143,7 +143,9 @@ def show_sk_vel_graph(df, id_person):
     ax.set_ylabel("Sk_Value")
     ax.set_title("Correlación entre Velocity y Sk_Value")
     plt.savefig("../images/"+"sk_vel_graph.png")
-    return fig
+    plt.show()
+    if (flag == 1):
+        st.pyplot(fig)
 
 
 def get_most_repited(df):
@@ -153,9 +155,11 @@ def get_most_repited(df):
     indice_valor_max = np.argmax(frecuency)
     return idss[indice_valor_max]
 
-def show_sk(id_person):
+
+def show_sk(id_person, flag):
     df = read_modified_file("UNI_CORR_500_05.txt")
-    return show_sk_vel_graph(df, id_person)
+    show_sk_vel_graph(df, id_person, flag)
+
 
 def main():
     files = {
@@ -184,16 +188,17 @@ def main():
     df = read_modified_file(fileName5)
 
     id_person = get_most_repited(df)
-    grafica_sk = show_sk_vel_graph(df, id_person)
-    grafica_sk.show()
-    time.sleep(7)
+    show_sk_vel_graph(df, id_person, 0)  # si es 0, no mostrar la
+    # algo con continue?
+
 
 main()
 
 
 with st.container():
     st.title('Análisis de Flujo Peatonal con Pandas y Matplotlib')
-    st.subheader('Esta aplicación es para observar el comportamiento de peatones en el pasillo de un metro')
+    st.subheader(
+        'Esta aplicación es para observar el comportamiento de peatones en el pasillo de un metro')
     left_column, right_column = st.columns(2)
     with left_column:
         st.markdown(f'<h4 style="text-align: left; font-size: 24px;"><a href="https://github.com/slderlv/PC-Laboratorio" target="_blank" style="text-decoration: none; color: inherit;"><u>Visita el repositorio en GitHub</u></a></h4>', unsafe_allow_html=True)
@@ -210,7 +215,8 @@ with st.container():
     incluyendo su ID, el frame del video en el que aparecen y sus coordenadas (x, y, z) en un espacio tridimensional. Los datos procesados
     permitieron la obtención de datos como la velocidad peatonal y el promedio de las distancias entre peatones dado un radio''')
     st.write("")
-    st.image('../images/histogram_velocity_comparisson.png', caption='Fig 1. Histograma a partir de datos de archivo UNI_CORR_500_01 y UNI_CORR_500_05')
+    st.image('../images/histogram_velocity_comparisson.png',
+             caption='Fig 1. Histograma a partir de datos de archivo UNI_CORR_500_01 y UNI_CORR_500_05')
     st.write("")
     st.write('''A partir de los histogramas se puede observar patrones de velocidad distintos para los diferentes archivos seleccionados.
     Para los datos del primer archivo se obtuvo que se mantiene una velocidad constante de alrededor de 1.5 metros por segundo a lo largo de
@@ -228,7 +234,8 @@ with st.container():
     st.write('''Para la comparación de velocidades entre diferentes peatones se creó un boxplot utilizando los datos del archivo UNI_CORR_500_01
     ''')
     st.write("")
-    st.image('../images/velocity_boxplot.png', caption='Fig 2. Diagrama de caja y bigote a partir de datos de archivo UNI_CORR_500_01')
+    st.image('../images/velocity_boxplot.png',
+             caption='Fig 2. Diagrama de caja y bigote a partir de datos de archivo UNI_CORR_500_01')
     st.write("")
     st.write('''En cuanto a los diagramas de caja generados, se observa que en el archivo UNI_CORR_500_01, la mediana de velocidad para
     cada persona se encuentra generalmente en el rango de 1,5 +- 0,3 m/s Esto sugiere que la mayoría de las personas mantuvieron velocidades
@@ -242,7 +249,7 @@ with st.container():
     en el archivo UNI_CORR_500_05 en función de los transeúntes dentro de un radio''')
     st.write("")
     div = st.slider('ID peatón:', 1, 905, 710)
-    st.pyplot(show_sk(div))
+    show_sk(div, 1)
     st.write("")
     st.write('''Con el Scatter se puede concluir que a mayor cantidad de transeúntes cercanos al analizado, menor es la velocidad predicha, y
     a menor cantidad de vecinos transeúntes en el radio, mayor es la velocidad predicha, proporcionando así, el Sk, información adicional sobre cómo se
